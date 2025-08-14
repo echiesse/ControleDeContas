@@ -4,3 +4,4 @@ db.sqlite3
 node_modules
 /src/ControleContas/settings.py
 /ui/vite.config.js
+/ui/src/components/examples

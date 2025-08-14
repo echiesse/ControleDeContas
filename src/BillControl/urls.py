@@ -8,5 +8,6 @@ urlpatterns = [
 
     path('bills/', ListBills.as_view()),
     path('bills/create/', CreateBills.as_view()),
+    path('bills/create-for-month/', CreateMonthBills.as_view()),
     path('bill/<int:pk>/', RetrieveUpdateDestroyBills.as_view()),
 ]

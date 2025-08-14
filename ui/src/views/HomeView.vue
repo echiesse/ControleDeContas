@@ -1,27 +1,44 @@
 
 <template>
   <main>
-    <BillTable :bills = "bills" @billUpdated="billUpdated"/>
+    <BillTable
+        v-for="month in billMonths"
+        :title="`Contas ${month+1}`"
+        :bills="billsPerMonth[month]"
+        @billUpdated="billUpdated"
+    />
     <AddBill @billAdded="billAdded" />
+    <AddMonthBills @createButtonClicked="createMonthBills"/>
   </main>
 </template>
 
 
 <script setup>
 import {ref, onMounted} from 'vue'
-import BillTable from '@/components/BillTable/BillTable.vue'
-import AddBill from '@/components/AddBill.vue'
-import { newDateFromLocalDateStr as newDateFromLocalDateStr, newUTCDateFromStr } from '@/support/datetime'
-
-async function updateBillsFromBackEnd() {
-    let _bills = await fetchBills()
-    _bills = _bills.sort((b1, b2) => b1.due_date - b2.due_date)
-    bills.value = _bills
-}
+import BillTable from '@/components/Bill/BillTable/BillTable.vue'
+import AddBill from '@/components/Bill/AddBill.vue'
+import AddMonthBills from '@/components/Bill/AddMonthBills.vue'
+import { newDateFromLocalDateStr } from '@/support/datetime'
 
 
 const bills = ref([])
+const billsPerMonth = ref({})
+const billMonths = ref([])
+
 onMounted (async() => await updateBillsFromBackEnd())
+
+async function updateBillsFromBackEnd() {
+    let _bills = await fetchBills()
+    bills.value = sortBills(_bills)
+    for (const bill of _bills) {
+        if (! billsPerMonth.value[bill.due_date.getMonth()]) {
+            billMonths.value.push(bill.due_date.getMonth())
+            billsPerMonth.value[bill.due_date.getMonth()] = []
+        }
+        billsPerMonth.value[bill.due_date.getMonth()].push(bill)
+    }
+    console.log(billMonths.value); //<<<<<
+}
 
 async function billAdded(bill) {
     if (typeof bill.error != 'undefined') {
@@ -36,11 +53,25 @@ async function billUpdated(bill) {
     await updateBillsFromBackEnd()
 }
 
+
+async function createMonthBills(month, year) {
+    const createdBills = await post(createMonthBillsUrl, {data: {month: month, year: year}})
+    console.log('Created Bills:'); //<<<<<
+    console.log(createdBills); //<<<<<
+
+    for (const bill of createdBills) {
+        bills.value.push(bill)
+        sortBills(bills.value)
+    }
+}
+
 </script>
 
 
 <script>
+import { post } from '@/support/http'
 const billListUrl = '/api/bill-control/bills/'
+const createMonthBillsUrl = '/api/bill-control/bills/create-for-month/'
 
 function sortBills(bills) {
     return bills.sort((b1, b2) => b1.due_date - b2.due_date)

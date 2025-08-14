@@ -21,6 +21,11 @@ class BillCreateSerializer(Serializer):
     year = serializers.IntegerField()
 
 
+class MonthBillsCreateSerializer(Serializer):
+    month = serializers.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(12)])
+    year = serializers.IntegerField()
+
+
 class BillSerializer(ModelSerializer):
     class Meta:
         model = Bill

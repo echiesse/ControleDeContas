@@ -65,6 +65,35 @@ class CreateBills(APIView):
             return Response(data={'error': f'{serializer.errors}'}, status=500)
 
 
+class CreateMonthBills(APIView):
+    def post(self, request):
+        serializer = MonthBillsCreateSerializer(data = request.data)
+        if serializer.is_valid():
+            created_bills = []
+            errors = []
+            types = BillType.objects.all()
+            for type in types:
+                try:
+                    bill = Bill.objects.create(
+                        type = type,
+                        due_date = date(
+                            year = serializer.data['year'],
+                            month = serializer.data['month'],
+                            day = type.payment_day,
+                        )
+                    )
+                    created_bills.append(bill)
+                    #return Response(bill_serializer.data)
+                except Exception as e:
+                    errors.append(e)
+                    #return Response(data = {'error': f'{e}'}, status=500)
+            bill_serializer = BillSerializer(created_bills, many = True)
+            return Response(bill_serializer.data)
+
+        else:
+            return Response(data={'error': f'{serializer.errors}'}, status=500)
+
+
 class RetrieveUpdateDestroyBills(RetrieveUpdateDestroyAPIView):
     serializer_class = BillDetailSerializer
     queryset = Bill.objects.all()

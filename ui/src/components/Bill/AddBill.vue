@@ -8,9 +8,7 @@
                 </select>
             </li>
             <li>Mês:
-                <select v-model="selectedMonth">
-                    <option v-for="monthNumber in months" :value="monthNumber">{{ monthNumber }}</option>
-                </select>
+                <MonthSelector v-model="selectedMonth"/>
             </li>
             <li>Ano:
                 <select v-model="selectedYear">
@@ -24,11 +22,11 @@
 </template>
 
 
-
 <script setup>
 import {ref, onMounted, watch} from 'vue'
 import { post } from '@/support/http'
 import { now } from '@/support/datetime'
+import MonthSelector from '@/components/MonthSelector.vue';
 
 const emit = defineEmits(['billAdded'])
 

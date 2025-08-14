@@ -1,5 +1,5 @@
 <template>
-    <h1>Contas</h1>
+    <h1>{{title}}</h1>
     <table class="table">
         <thead>
             <tr>
@@ -23,7 +23,8 @@
 import BillTableRow from './BillTableRow.vue'
 
 const props = defineProps({
-    bills: Array
+    bills: Array,
+    title: String,
 })
 
 const emit = defineEmits(['billUpdated'])
