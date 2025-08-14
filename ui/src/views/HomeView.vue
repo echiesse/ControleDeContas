@@ -1,9 +1,8 @@
-
 <template>
   <main>
     <BillTable
         v-for="month in billMonths"
-        :title="`Contas ${month+1}`"
+        :title="`Contas de ${monthStr(month)}`"
         :bills="billsPerMonth[month]"
         @billUpdated="billUpdated"
     />
@@ -20,16 +19,25 @@ import AddBill from '@/components/Bill/AddBill.vue'
 import AddMonthBills from '@/components/Bill/AddMonthBills.vue'
 import { newDateFromLocalDateStr } from '@/support/datetime'
 
-
+//------------------------------------------------------------------------------
+// Data:
 const bills = ref([])
 const billsPerMonth = ref({})
 const billMonths = ref([])
 
+
+//------------------------------------------------------------------------------
+// Hooks:
 onMounted (async() => await updateBillsFromBackEnd())
 
+
+//------------------------------------------------------------------------------
+// Functions:
 async function updateBillsFromBackEnd() {
     let _bills = await fetchBills()
     bills.value = sortBills(_bills)
+    billMonths.value = []
+    billsPerMonth.value = {}
     for (const bill of _bills) {
         if (! billsPerMonth.value[bill.due_date.getMonth()]) {
             billMonths.value.push(bill.due_date.getMonth())
@@ -37,7 +45,6 @@ async function updateBillsFromBackEnd() {
         }
         billsPerMonth.value[bill.due_date.getMonth()].push(bill)
     }
-    console.log(billMonths.value); //<<<<<
 }
 
 async function billAdded(bill) {
@@ -56,9 +63,6 @@ async function billUpdated(bill) {
 
 async function createMonthBills(month, year) {
     const createdBills = await post(createMonthBillsUrl, {data: {month: month, year: year}})
-    console.log('Created Bills:'); //<<<<<
-    console.log(createdBills); //<<<<<
-
     for (const bill of createdBills) {
         bills.value.push(bill)
         sortBills(bills.value)
@@ -89,8 +93,14 @@ async function fetchBills() {
     const response = await fetch(billListUrl)
     let bills = await response.json()
     bills = bills.map(normalizeBill)
-    console.log(bills); //<<<<<
     return bills
+}
+
+function monthStr(month){
+    const date = new Date()
+    date.setDate(15) // Just to be in the middle of the month
+    date.setMonth(month)
+    return date.toLocaleString('default', { month: 'long' });
 }
 
 </script>
