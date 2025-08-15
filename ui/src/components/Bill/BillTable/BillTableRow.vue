@@ -35,18 +35,8 @@ const paidDate = computed(() => newDateFromLocalDateStr(newPaidDate.value))
 
 const isDateInputVisible = ref(false)
 
-function formatDateUTC(d) {
-    if (d == null) return null
-    return d.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        timeZone: 'UTC', // Necessário para exibir a data no dia correto
-    })
-}
 
 function formatDate(d) {
-    console.log(d); //<<<<<
     if (d == null) return null
     return d.toLocaleString('pt-BR', {
         day: '2-digit',
@@ -59,7 +49,7 @@ function formatDate(d) {
 function formatBill(bill) {
     return {
         ...bill,
-        due_date: formatDateUTC(bill.due_date),
+        due_date: formatDate(bill.due_date),
         paid_date: bill.paid_date && formatDate(bill.paid_date)
     }
 }
@@ -103,8 +93,6 @@ function onPaidDateClick(e) {
         newPaidDate.value = props.bill.paid_date && formatDateToSend(props.bill.paid_date)
     }
 }
-
-
 
 </script>
 
