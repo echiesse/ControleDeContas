@@ -85,10 +85,15 @@ class CreateMonthBills(APIView):
                     created_bills.append(bill)
                     #return Response(bill_serializer.data)
                 except Exception as e:
-                    errors.append(e)
+                    errors.append(f'{e}')
                     #return Response(data = {'error': f'{e}'}, status=500)
             bill_serializer = BillSerializer(created_bills, many = True)
-            return Response(bill_serializer.data)
+            response_data = {'data': []}
+            print(bill_serializer.data)
+            response_data['data'].extend(bill_serializer.data)
+            response_data['errors'] = errors
+            #return Response(bill_serializer.data)
+            return Response(response_data)
 
         else:
             return Response(data={'error': f'{serializer.errors}'}, status=500)
