@@ -1,13 +1,14 @@
 <template>
   <main>
-    <BillTable
-        v-for="month in billMonths"
-        :title="`Contas de ${monthStr(month)}`"
-        :bills="billsPerMonth[month]"
-        @billUpdated="billUpdated"
-    />
-    <AddBill @billAdded="billAdded" />
-    <AddMonthBills @createButtonClicked="createMonthBills"/>
+    <div class="container">
+        <BillTable
+            v-for="month in billMonths"
+            :title="`Contas de ${monthStr(month)}`"
+            :bills="billsPerMonth[month]"
+            @billUpdated="billUpdated"
+        />
+        <AddMonthBills @createButtonClicked="createMonthBills"/>
+    </div>
   </main>
 </template>
 
@@ -63,7 +64,9 @@ async function billUpdated(bill) {
 
 async function createMonthBills(month, year) {
     const createdBills = await post(createMonthBillsUrl, {data: {month: month, year: year}})
-    for (const bill of createdBills) {
+    console.log(createdBills); //<<<<<
+    for (const bill of createdBills.data) {
+        console.log(bill)
         bills.value.push(bill)
         sortBills(bills.value)
     }

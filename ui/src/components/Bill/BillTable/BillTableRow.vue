@@ -99,21 +99,12 @@ function onPaidDateClick(e) {
 
 <style scoped>
 
-table td, table th {
-    border: solid;
-    border-collapse: collapse;
-    border-color: silver;
-    border-width: 1px;
-}
-
-table td, table th {
-    text-align: left;
-}
-
 .unpaid {
     background-color: rgb(255, 150, 150);
 }
+
 .paid {
     background-color: rgb(154, 226, 154);
 }
+
 </style>

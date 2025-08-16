@@ -1,6 +1,6 @@
 <template>
     <h1>{{title}}</h1>
-    <table class="table">
+    <table class="table table-bordered">
         <thead>
             <tr>
                 <th>Conta</th>
@@ -33,15 +33,5 @@ const emit = defineEmits(['billUpdated'])
 
 
 <style scoped>
-table, table td, table th {
-    border: solid;
-    border-collapse: collapse;
-    border-color: silver;
-    border-width: 1px;
-}
-
-table td, table th {
-    text-align: left;
-}
 
 </style>
